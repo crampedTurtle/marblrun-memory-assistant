@@ -1,1 +1,1 @@
-# MarblRun Memory Assistant Backend Package 
+# AI Assistant Platform Backend 

@@ -1,185 +1,197 @@
-# MarblRun - Local Memory Assistant
+# AI Assistant Platform
 
-A local memory assistant application similar to Marblism, built with FastAPI, PostgreSQL, Qdrant vector database, and Next.js. Store your thoughts, memories, and notes with semantic search capabilities powered by OpenAI embeddings.
+A full-stack AI-powered assistant platform inspired by Marblism, featuring multiple AI agents with unique personalities and specialized capabilities.
 
 ## 🚀 Features
 
-- **Note Management**: Create, view, and delete notes with optional titles
-- **Semantic Search**: Search through your memories using natural language queries
-- **Vector Storage**: Fast similarity search using Qdrant vector database
-- **Modern UI**: Clean, responsive interface built with Next.js and Tailwind CSS
-- **Real-time Search**: Instant search results with similarity scores
-- **Timeline View**: Chronological view of all your notes
-- **Search Suggestions**: AI-powered search suggestions based on recent notes
+- **Multiple AI Agents**: Choose from Cara (Customer Support), Penny (SEO Writer), and Eva (Executive Assistant)
+- **Persistent Memory**: Each agent maintains their own vector-based memory using Qdrant
+- **Real-time Chat**: Interactive chat interface with typing indicators and message history
+- **Semantic Search**: Search through agent memories and conversations
+- **Modern UI**: Beautiful, responsive interface built with Next.js and Tailwind CSS
+- **Docker Deployment**: Easy containerized deployment with Docker Compose
 
 ## 🏗️ Architecture
 
-### Backend (FastAPI)
-- **FastAPI**: Modern, fast web framework for building APIs
-- **PostgreSQL**: Primary database for storing note metadata
-- **Qdrant**: Vector database for semantic search
-- **OpenAI API**: Text embeddings and semantic understanding
-- **SQLAlchemy**: Database ORM and migrations
+### Backend Stack
+- **FastAPI**: High-performance Python web framework
+- **PostgreSQL**: Relational database for structured data
+- **Qdrant**: Vector database for semantic search and memory
+- **OpenAI API**: Embeddings and LLM for AI capabilities
 
-### Frontend (Next.js)
+### Frontend Stack
 - **Next.js 14**: React framework with App Router
-- **TypeScript**: Type-safe development
 - **Tailwind CSS**: Utility-first CSS framework
-- **Lucide React**: Beautiful icons
+- **TypeScript**: Type-safe JavaScript
 - **Axios**: HTTP client for API communication
 
-## 📋 Prerequisites
+### Infrastructure
+- **Docker Compose**: Container orchestration
+- **Qdrant**: Vector similarity search
+- **PostgreSQL**: External database (assumes `postgres.home.lan:5432`)
 
+## 🛠️ Setup
+
+### Prerequisites
 - Docker and Docker Compose
-- PostgreSQL database (accessible at `postgres.home.lan:5432`)
+- PostgreSQL database running at `postgres.home.lan:5432`
 - OpenAI API key
-- Node.js 18+ (for local development)
 
-## 🛠️ Setup Instructions
+### 1. Clone the Repository
+```bash
+git clone <repository-url>
+cd ai-assistant-platform
+```
 
-### 1. Environment Configuration
-
+### 2. Environment Setup
 Create a `.env` file in the root directory:
-
 ```bash
-# OpenAI API Configuration
 OPENAI_API_KEY=your_openai_api_key_here
-
-# Database Configuration (adjust if needed)
-DATABASE_URL=postgresql://postgres:postgres@postgres.home.lan:5432/marblrun
-
-# Qdrant Configuration
+DATABASE_URL=postgresql://postgres:password@postgres.home.lan:5432/ai_assistants
 QDRANT_URL=http://localhost:6333
-COLLECTION_NAME=memories
-
-# Frontend Configuration
-NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
-### 2. Database Setup
+### 3. Database Setup
+Create the database in your PostgreSQL instance:
+```sql
+CREATE DATABASE ai_assistants;
+```
 
-Ensure your PostgreSQL database is running and accessible. The application will automatically create the required tables on first startup.
-
-### 3. Launch the Application
-
+### 4. Launch the Application
 ```bash
-# Start all services
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Stop services
-docker-compose down
+docker-compose up --build
 ```
 
-### 4. Access the Application
-
+The application will be available at:
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:8000
-- **API Documentation**: http://localhost:8000/docs
-- **Qdrant Dashboard**: http://localhost:6333/dashboard
+- **Qdrant**: http://localhost:6333
+
+## 📚 API Documentation
+
+### Agents Endpoints
+
+#### List All Agents
+```http
+GET /api/agents
+```
+
+#### Chat with Agent
+```http
+POST /api/agent/{agent_name}/chat
+Content-Type: application/json
+
+{
+  "message": "Hello, how can you help me?",
+  "context": "Optional conversation context"
+}
+```
+
+#### Store Note
+```http
+POST /api/agent/{agent_name}/note
+Content-Type: application/json
+
+{
+  "content": "Important information to remember",
+  "metadata": {
+    "category": "meeting",
+    "priority": "high"
+  }
+}
+```
+
+#### Search Agent Memory
+```http
+GET /api/agent/{agent_name}/search?q=search_query&limit=10
+```
+
+### Available Agents
+
+#### Cara - Customer Support Specialist
+- **Personality**: Empathetic, patient, solution-oriented
+- **Expertise**: Customer service, problem resolution, communication
+- **Use Cases**: Customer inquiries, support tickets, feedback handling
+
+#### Penny - SEO Content Strategist
+- **Personality**: Witty, creative, data-driven
+- **Expertise**: SEO, content strategy, copywriting, social media
+- **Use Cases**: Blog writing, content planning, SEO optimization
+
+#### Eva - Executive Assistant
+- **Personality**: Organized, efficient, detail-oriented
+- **Expertise**: Scheduling, project management, communication coordination
+- **Use Cases**: Calendar management, meeting preparation, task tracking
+
+## 🎨 UI Components
+
+### Agent Selection Grid
+- Pop-art style cards with gradient backgrounds
+- Hover animations and smooth transitions
+- Agent-specific icons and color schemes
+
+### Chat Interface
+- Real-time message exchange
+- Typing indicators
+- Message timestamps
+- Responsive design for mobile and desktop
+
+### Search Functionality
+- Semantic search through agent memories
+- Relevance scoring
+- Source attribution (conversation vs note)
 
 ## 🔧 Development
 
 ### Backend Development
-
 ```bash
 cd backend
-
-# Install dependencies
 pip install -r requirements.txt
-
-# Run development server
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+uvicorn main:app --reload
 ```
 
 ### Frontend Development
-
 ```bash
 cd frontend
-
-# Install dependencies
 npm install
-
-# Run development server
 npm run dev
 ```
 
-## 📚 API Endpoints
-
-### Notes
-- `POST /api/notes` - Create a new note
-- `GET /api/notes` - Get all notes (with pagination)
-- `GET /api/notes/{note_id}` - Get a specific note
-- `DELETE /api/notes/{note_id}` - Delete a note
-- `GET /api/notes/stats` - Get system statistics
-
-### Search
-- `POST /api/query` - Search memories semantically
-- `GET /api/query/similar/{note_id}` - Find similar notes
-- `GET /api/query/suggestions` - Get search suggestions
-
-## 🗄️ Database Schema
-
-### Notes Table
-```sql
-CREATE TABLE notes (
-    id SERIAL PRIMARY KEY,
-    content TEXT NOT NULL,
-    title VARCHAR(255),
-    vector_id VARCHAR(255) UNIQUE NOT NULL,
-    embedding_model VARCHAR(100) DEFAULT 'text-embedding-ada-002',
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE
-);
-```
-
-## 🔍 How It Works
-
-1. **Note Creation**: When you create a note, the content is sent to OpenAI to generate embeddings
-2. **Vector Storage**: The embedding is stored in Qdrant with metadata
-3. **Metadata Storage**: Note details are stored in PostgreSQL
-4. **Semantic Search**: When you search, your query is embedded and compared against stored vectors
-5. **Results**: Similar notes are retrieved and ranked by similarity score
-
-## 🎨 UI Features
-
-- **Responsive Design**: Works on desktop, tablet, and mobile
-- **Dark Mode Ready**: CSS variables for easy theming
-- **Loading States**: Smooth loading indicators
-- **Error Handling**: User-friendly error messages
-- **Keyboard Navigation**: Full keyboard accessibility
-- **Search Suggestions**: AI-powered search recommendations
-
-## 🔒 Security Considerations
-
-- No authentication implemented (as requested)
-- API endpoints are publicly accessible
-- Consider adding authentication for production use
-- OpenAI API key should be kept secure
+### Adding New Agents
+1. Create agent class in `backend/app/agents/`
+2. Add system prompt in `backend/prompts/`
+3. Register agent in `backend/app/routers/agents.py`
+4. Add UI configuration in `frontend/components/AgentGrid.tsx`
 
 ## 🚀 Deployment
 
-### Production Considerations
+### Production Deployment
+1. Set environment variables for production
+2. Build and push Docker images
+3. Deploy with Docker Compose or Kubernetes
+4. Configure reverse proxy (NGINX) for SSL termination
 
-1. **Environment Variables**: Use proper environment management
-2. **Database**: Use managed PostgreSQL service
-3. **Vector Database**: Consider Qdrant Cloud for production
-4. **API Keys**: Secure OpenAI API key management
-5. **SSL/TLS**: Enable HTTPS for production
-6. **Monitoring**: Add logging and monitoring
-7. **Backup**: Regular database backups
+### Environment Variables
+- `OPENAI_API_KEY`: Your OpenAI API key
+- `DATABASE_URL`: PostgreSQL connection string
+- `QDRANT_URL`: Qdrant service URL
+- `NEXT_PUBLIC_API_URL`: Frontend API endpoint
 
-### Docker Production
+## 🔮 Future Enhancements
 
-```bash
-# Build production images
-docker-compose -f docker-compose.prod.yml build
+### Planned Integrations
+- **n8n Workflow Automation**: Connect agents to automated workflows
+- **Zoho Mail Integration**: Email ingestion for Cara and Eva
+- **Cal.com Scheduling**: Calendar integration for Eva
+- **File Upload**: Document processing and analysis
+- **Multi-user Support**: User authentication and permissions
 
-# Deploy
-docker-compose -f docker-compose.prod.yml up -d
-```
+### Advanced Features
+- **Agent Collaboration**: Agents working together on complex tasks
+- **Custom Agent Creation**: User-defined agent personalities
+- **Analytics Dashboard**: Usage statistics and performance metrics
+- **API Rate Limiting**: Protect against abuse
+- **Webhook Support**: Real-time notifications and integrations
 
 ## 🤝 Contributing
 
@@ -191,33 +203,11 @@ docker-compose -f docker-compose.prod.yml up -d
 
 ## 📄 License
 
-This project is open source and available under the MIT License.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🆘 Troubleshooting
+## 🆘 Support
 
-### Common Issues
-
-1. **Database Connection**: Ensure PostgreSQL is accessible
-2. **OpenAI API**: Verify API key is valid and has credits
-3. **Qdrant**: Check if vector database is running
-4. **Port Conflicts**: Ensure ports 3000, 8000, and 6333 are available
-
-### Logs
-
-```bash
-# View all logs
-docker-compose logs
-
-# View specific service logs
-docker-compose logs backend
-docker-compose logs frontend
-docker-compose logs qdrant
-```
-
-## 📞 Support
-
-For issues and questions:
-1. Check the troubleshooting section
-2. Review the API documentation at `/docs`
-3. Check the logs for error messages
-4. Open an issue on GitHub 
+For support and questions:
+- Create an issue in the repository
+- Check the API documentation at http://localhost:8000/docs
+- Review the Qdrant documentation for vector search features 

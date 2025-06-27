@@ -1,38 +1,37 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
 
-class NoteCreate(BaseModel):
-    """Schema for creating a new note"""
-    content: str = Field(..., min_length=1, max_length=10000, description="Note content")
-    title: Optional[str] = Field(None, max_length=255, description="Optional note title")
+class ChatRequest(BaseModel):
+    message: str
+    context: Optional[str] = None
+
+class ChatResponse(BaseModel):
+    response: str
+    agent_name: str
+    conversation_id: int
+
+class NoteRequest(BaseModel):
+    content: str
+    metadata: Optional[dict] = None
 
 class NoteResponse(BaseModel):
-    """Schema for note response"""
     id: int
     content: str
-    title: Optional[str]
-    vector_id: str
-    embedding_model: str
+    agent_name: str
     created_at: datetime
-    updated_at: Optional[datetime]
-    
-    class Config:
-        from_attributes = True
 
-class QueryRequest(BaseModel):
-    """Schema for query request"""
-    query: str = Field(..., min_length=1, max_length=1000, description="Search query")
-    limit: Optional[int] = Field(10, ge=1, le=50, description="Maximum number of results")
-
-class QueryResponse(BaseModel):
-    """Schema for query response"""
+class SearchRequest(BaseModel):
     query: str
-    results: List[NoteResponse]
-    total_found: int
-    search_time_ms: float
+    limit: Optional[int] = 10
 
 class SearchResult(BaseModel):
-    """Schema for search result with similarity score"""
-    note: NoteResponse
-    similarity_score: float 
+    content: str
+    score: float
+    source: str  # "conversation" or "note"
+    created_at: datetime
+
+class SearchResponse(BaseModel):
+    results: List[SearchResult]
+    query: str
+    agent_name: str 
