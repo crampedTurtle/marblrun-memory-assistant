@@ -11,7 +11,8 @@ export default function Home() {
 
   useEffect(() => {
     // Fetch available agents
-    fetch('/api/agents')
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+    fetch(`${apiUrl}/api/agents`)
       .then(res => res.json())
       .then(data => setAgents(data.agents))
       .catch(err => console.error('Failed to fetch agents:', err))
