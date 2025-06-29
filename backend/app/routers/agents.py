@@ -6,7 +6,7 @@ import json
 from ..database import get_db
 from ..models import Conversation, Note
 from ..schemas import ChatRequest, ChatResponse, NoteRequest, NoteResponse, SearchRequest, SearchResponse, SearchResult
-from ..agents import Cara, Penny, Eva
+from ..agents import Cara, Penny, Eva, Stan, Sonny
 
 router = APIRouter()
 
@@ -14,7 +14,9 @@ router = APIRouter()
 agents = {
     "cara": Cara(),
     "penny": Penny(),
-    "eva": Eva()
+    "eva": Eva(),
+    "stan": Stan(),
+    "sonny": Sonny()
 }
 
 @router.post("/agent/{agent_name}/chat", response_model=ChatResponse)
